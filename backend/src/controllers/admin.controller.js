@@ -1,6 +1,7 @@
 const Admin = require("../models/Admin");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const Joi = require("joi");
 
 const AdminLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -14,7 +15,7 @@ const AdminLogin = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
     const token = jwt.sign({ id: superAdmin._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: "1d",
     });
     res.json({ token });
   } catch (error) {
@@ -23,10 +24,10 @@ const AdminLogin = async (req, res) => {
   }
 };
 const createAdmin = async (req, res) => {
-  const { fullname, email, password } = req.body;
+  const { email, password } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const admin = new Admin({ fullname, email, password: hashedPassword });
+    const admin = new Admin({ email, password: hashedPassword });
     await admin.save();
     res.status(201).json(admin);
   } catch (error) {
@@ -61,7 +62,6 @@ const updateAdmin = async (req, res) => {
     const { id } = req.params;
 
     const schema = Joi.object({
-      fullname: Joi.string(),
       email: Joi.string().email(),
       password: Joi.string().min(4),
     });
