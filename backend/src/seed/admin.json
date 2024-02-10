@@ -1,26 +1,20 @@
 [
   {
-    "fullname": "Admin",
+    "fullname": "admin",
     "role": "admin",
     "email": "admin@gmail.com",
     "password": "1234"
   },
   {
-    "fullname": "Super Admin",
-    "role": "super_admin",
-    "email": "superadmin@gmail.com",
+    "fullname": "Javohir",
+    "role": "admin",
+    "email": "muhammadiyevj768@gmail.com",
     "password": "1234"
   },
   {
-    "fullname": "Muxammadiyev Javohir",
-    "role": "super_admin",
-    "email": "javohir@gmail.com",
-    "password": "1234"
-  },
-  {
-    "fullname": "Baxa",
-    "role": "super_admin",
-    "email": "baxa@gmail.com",
+    "fullname": "Jaxongir",
+    "role": "admin",
+    "email": "jaxongir@gmail.com",
     "password": "1234"
   }
 ]
