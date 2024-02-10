@@ -11,10 +11,6 @@ const AdminSchema = new mongoose.Schema(
       type: mongoose.SchemaTypes.String,
       required: true,
     },
-    fullname: {
-      type: mongoose.SchemaTypes.String,
-      required: true,
-    },
     role: {
       type: mongoose.SchemaTypes.String,
       enum: ["admin", "user", "students"],
