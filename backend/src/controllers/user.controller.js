@@ -9,11 +9,12 @@ const User = require("../models/User.js");
 const registerAndLoginUser = async (req, res) => {
   try {
     const schema = Joi.object({
-      username: Joi.string().required(),
-      fullname: Joi.string().required(),
+      first_name: Joi.string().required(),
+      last_name: Joi.string().required(),
+      date_of_birth: Joi.date().required(),
+      phone_number: Joi.string().required(),
       email: Joi.string().email().required(),
       password: Joi.string().min(4).required(),
-      phone_number: Joi.string().required(),
     });
 
     const { error } = schema.validate(req.body);
@@ -21,7 +22,14 @@ const registerAndLoginUser = async (req, res) => {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    const { username, fullname, email, password, phone_number } = req.body;
+    const {
+      first_name,
+      last_name,
+      date_of_birth,
+      email,
+      password,
+      phone_number,
+    } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -32,11 +40,12 @@ const registerAndLoginUser = async (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, salt);
 
     const newUser = new User({
-      username,
-      fullname,
+      first_name,
+      last_name,
+      date_of_birth,
+      phone_number,
       email,
       password: hashedPassword,
-      phone_number,
     });
     const savedUser = await newUser.save();
 
@@ -49,11 +58,12 @@ const registerAndLoginUser = async (req, res) => {
 const registerUser = async (req, res) => {
   try {
     const schema = Joi.object({
-      username: Joi.string().required(),
-      fullname: Joi.string().required(),
+      first_name: Joi.string().required(),
+      last_name: Joi.string().required(),
+      date_of_birth: Joi.date().required(),
+      phone_number: Joi.string().required(),
       email: Joi.string().email().required(),
       password: Joi.string().min(4).required(),
-      phone_number: Joi.string().required(),
     });
 
     const { error } = schema.validate(req.body);
@@ -117,7 +127,6 @@ const userLogin = async (req, res) => {
         .json({ error: "An error occurred while sending the email" });
     } else {
       console.log("Email sent:", info.response);
-      // Save phone_number_tokens to file
       fs.writeFileSync(
         phone_number_tokens_file,
         JSON.stringify(phone_number_tokens)
@@ -145,7 +154,6 @@ const resetcode = (req, res) => {
   }
   user.phone_number = phone_number;
   delete phone_number_tokens[token];
-  // Save phone_number_tokens to file
   fs.writeFileSync(
     phone_number_tokens_file,
     JSON.stringify(phone_number_tokens)
@@ -167,64 +175,6 @@ const getTokenByCode = (req, res) => {
   res.json({ token });
 };
 
-const createUser = async (req, res) => {
-  try {
-    const {
-      username,
-      password,
-      fullname,
-      phone_number,
-      about,
-      specialization,
-      email,
-      subscription_status,
-      post_ref_id,
-      role,
-    } = req.body;
-    let imagePath =
-      "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg";
-
-    if (req.file) {
-      imagePath = req.file.path;
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = bcrypt.hashSync(password, salt);
-
-    const user = await User.create({
-      username,
-      password: hashedPassword,
-      fullname,
-      phone_number,
-      images: imagePath,
-      email,
-    });
-    res.status(201).json({ success: true, data: user });
-  } catch (error) {
-    res.status(400).json({ success: false, error });
-  }
-};
-
-const getUsers = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
-
-    const users = await User.find().skip(skip).limit(limit).select("-password");
-    const totalCount = await User.countDocuments();
-
-    const totalPages = Math.ceil(totalCount / limit);
-
-    res.status(200).json({
-      users,
-      totalPages,
-      currentPage: page,
-    });
-  } catch (error) {
-    res.status(400).json(error);
-  }
-};
 
 const getUserById = async (req, res) => {
   try {
@@ -243,29 +193,23 @@ const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      username,
-      password,
-      fullname,
+      first_name,
+      last_name,
+      date_of_birth,
+      gender,
       phone_number,
-      about,
-      specialization,
       email,
-      subscription_status,
-      post_ref_id,
-      role,
+      password,
     } = req.body;
 
     let updateData = {
-      username,
-      password,
-      fullname,
+      last_name,
+      first_name,
+      date_of_birth,
+      gender,
       phone_number,
-      about,
-      specialization,
       email,
-      subscription_status,
-      post_ref_id,
-      role,
+      password,
     };
 
     if (req.file) {
@@ -319,8 +263,6 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
-  createUser,
-  getUsers,
   userLogin,
   resetcode,
   getTokenByCode,
