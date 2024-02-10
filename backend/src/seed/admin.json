@@ -1,20 +1,17 @@
 [
   {
-    "fullname": "admin",
-    "role": "admin",
     "email": "admin@gmail.com",
+    "role": "admin",
     "password": "1234"
   },
   {
-    "fullname": "Javohir",
-    "role": "admin",
     "email": "muhammadiyevj768@gmail.com",
+    "role": "admin",
     "password": "1234"
   },
   {
-    "fullname": "Jaxongir",
-    "role": "admin",
     "email": "jaxongir@gmail.com",
+    "role": "admin",
     "password": "1234"
   }
 ]
