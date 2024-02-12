@@ -31,7 +31,7 @@ const registerAndLoginUser = async (req, res) => {
       phone_number,
     } = req.body;
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email }).select("-password");
     if (existingUser) {
       return res.status(409).json({ error: "Email already exists" });
     }
