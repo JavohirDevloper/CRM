@@ -5,9 +5,10 @@ const db = require("./db/db");
 const handleError = require("./shared/errors/handle");
 
 // user routerlari
-const UserRouter = require("./routers/user.router.js");
+const UserRouter = require("./routers/user.router");
 const AdminRouter = require("./routers/admin.router");
-dotenv.config();
+
+dotenv.config(); 
 const app = express();
 // app use
 app.use(express.json());

@@ -76,7 +76,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-const phone_number_tokens_file = path.join(__dirname, "email.json");
+const phone_number_tokens_file = path.join(__dirname, "../email/email.json");
 let phone_number_tokens = {};
 
 if (fs.existsSync(phone_number_tokens_file)) {
