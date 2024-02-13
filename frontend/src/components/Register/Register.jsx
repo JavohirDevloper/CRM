@@ -1,8 +1,10 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
-import axios from "axios";
-import "./register.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+
+import "./register.css";
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
     first_name: "",
@@ -29,9 +31,11 @@ const RegisterForm = () => {
         formData
       );
       console.log(response.data);
+      toast.success("Siz roʻyxatdan muvaffaqiyatli oʻtdingiz");
       navigate("/user/verify");
     } catch (error) {
       console.error(error.response.data);
+      toast.error("Nimadir xato ketdi :(");
     }
   };
 
@@ -47,7 +51,6 @@ const RegisterForm = () => {
           required
         />
       </label>
-      <br />
       <label>
         Last Name:
         <input
@@ -58,7 +61,6 @@ const RegisterForm = () => {
           required
         />
       </label>
-      <br />
       <label>
         Date of Birth:
         <input
@@ -69,7 +71,6 @@ const RegisterForm = () => {
           required
         />
       </label>
-      <br />
       <label>
         Phone Number:
         <input
@@ -80,7 +81,6 @@ const RegisterForm = () => {
           required
         />
       </label>
-      <br />
       <label>
         Email:
         <input
@@ -91,7 +91,6 @@ const RegisterForm = () => {
           required
         />
       </label>
-      <br />
       <label>
         Password:
         <input
@@ -102,7 +101,6 @@ const RegisterForm = () => {
           required
         />
       </label>
-      <br />
       <button type="submit">Register</button>
     </form>
   );
