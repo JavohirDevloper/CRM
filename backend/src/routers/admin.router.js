@@ -7,10 +7,9 @@ const isLoggedIn = require("../shared/auth/isLoggedIn");
 router.post("/admin/login", AdminController.AdminLogin);
 
 // Admin
-router.post("/admin", isLoggedIn, AdminController.createAdmin);
-router.get("/admin", isLoggedIn, AdminController.getAllAdmins);
-router.get("/admin/:id", isLoggedIn, AdminController.getAdminById);
-router.put("/admin/:id", isLoggedIn, AdminController.updateAdmin);
-router.delete("/admin/:id", isLoggedIn, AdminController.deleteAdmin);
+router.post("/admin",  AdminController.createAdmin);
+router.get("/admin",  AdminController.getAllAdmins);
+router.put("/admin/:id",  AdminController.updateAdmin);
+router.delete("/admin/:id",  AdminController.deleteAdmin);
 
 module.exports = router;
