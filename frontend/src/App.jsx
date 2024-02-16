@@ -8,6 +8,8 @@ import Admin from "./components/Admin/Admin/Admin";
 import AdminLogin from "./components/Admin/Login/AdminLogin";
 import AdminCreate from "./components/Admin/Create/AdminCreate";
 import AdminUpdate from "./components/Admin/Update/AdminUpdate";
+import VideoUpload from "./components/Videos/VideoPost/Videos";
+import Video from "./components/Videos/VideoGet/Videos";
 const App = () => {
   return (
     <>
@@ -19,6 +21,8 @@ const App = () => {
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/create" element={<AdminCreate />} />
         <Route path="/admin/update/:adminId" element={<AdminUpdate />} />
+        <Route path="/videos/create" element={<VideoUpload />} />
+        <Route path="/videos" element={<Video />} />
       </Routes>
     </>
   );

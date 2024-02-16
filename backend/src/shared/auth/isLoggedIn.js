@@ -1,7 +1,7 @@
 const express = require("express");
 const { UnauthorizedError } = require("../errors");
-const config = require("../config");
 const jwt = require("jsonwebtoken");
+const config = require("../config");
 
 /**
  *
@@ -12,21 +12,25 @@ const jwt = require("jsonwebtoken");
 
 const isLoggedIn = async (req, res, next) => {
   try {
-    const token = req.headers.authorization;
-    if (!token) {
+    const { access_token } = req.headers;
+    let decoded = jwt.verify(access_token, config.jwt.secret);
+
+    if (!decoded) {
       throw new UnauthorizedError("Unauthorized.");
     }
-    
-    const decoded = jwt.verify(token, config.jwt.secret, {
-      ignoreExpiration: false,
-    });
-    console.log(decoded);
 
-    req.user = decoded.user;
+    if (decoded.role === "admin" || decoded.role === "user") {
+      req.user = decoded.user;
+      return next();
+    }
 
     next();
   } catch (error) {
-    next(new UnauthorizedError(error.message));
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+    console.log(error);
+    res.status(400).json({ error: "Bad Request" });
   }
 };
 

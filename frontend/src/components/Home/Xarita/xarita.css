@@ -1,0 +1,13 @@
+.container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.xarita {
+  width: 750px;
+  margin-top: 25px;
+  height: 750px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
