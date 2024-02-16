@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const coursesSchema = new mongoose.SchemaTypes({
+const coursesSchema = new mongoose.Schema({
   courses_name: {
     type: mongoose.SchemaTypes.String,
     required: true,
@@ -11,7 +11,7 @@ const coursesSchema = new mongoose.SchemaTypes({
   },
   title: {
     type: mongoose.SchemaTypes.String,
-    require: true,
+    required: true,
   },
   description: {
     type: mongoose.SchemaTypes.String,
@@ -22,14 +22,29 @@ const coursesSchema = new mongoose.SchemaTypes({
     required: true,
   },
   number_of_lessons: {
-    type: mongoose.SchemaTypes.Number,
-    required: true,
+    type: mongoose.SchemaTypes.String,
+    default: Date.now(),
   },
   continuity: {
     type: mongoose.SchemaTypes.String,
     required: true,
   },
   module: {
-    type: mongoose.sch
-  }
+    type: mongoose.SchemaTypes.String,
+    required: true,
+  },
+  stars: {
+    type: mongoose.SchemaTypes.Number,
+    required: true,
+    max: 5,
+    min: 1,
+  },
+  user_ref_id: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "User",
+  },
 });
+
+const Courses = mongoose.model("Courses", coursesSchema);
+
+module.exports = Courses;
