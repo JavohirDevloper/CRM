@@ -27,7 +27,7 @@ const Navbar = () => {
             <Link to="/videos">Video</Link>
           </li>
           <li>
-            <Link to="/">Contact Us</Link>
+            <Link to="/courses">Courses</Link>
           </li>
         </ul>
         <div className="hamburger" onClick={toggleMenu}>
