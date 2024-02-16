@@ -9,11 +9,12 @@ const handleError = require("./shared/errors/handle");
 const UserRouter = require("./routers/user.router");
 const AdminRouter = require("./routers/admin.router");
 const FileRouter = require("./routers/files.router");
+const CoursesRouter = require("./routers/courses.router");
 dotenv.config();
 const app = express();
 // app use
 app.use(express.json());
-app.use(express.static("/uploads/"));
+app.use(express.static("videos"));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(UserRouter);
 app.use(AdminRouter);
 app.use(FileRouter);
+app.use(CoursesRouter);
 // databaza
 db();
 
