@@ -104,7 +104,7 @@ const Courses = () => {
           >
             <div>
               <img
-                src={`http://localhost:5000/${course.courses_img}`}
+                src={`http://localhost:5000/${course?.courses_img}`}
                 alt="Course Image"
                 width="320"
                 height="240"
@@ -165,9 +165,9 @@ const Courses = () => {
                     required
                   />
                   <input
-                    type="date"
+                    type="text"
                     placeholder="Number of lessons"
-                    name="number"
+                    name="text"
                     value={formData.number_of_lessons}
                     onChange={handleChange}
                   />

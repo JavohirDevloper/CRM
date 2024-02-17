@@ -10,10 +10,10 @@ const CreateCourses = () => {
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [tip, setTip] = useState("")
-  const [number_of_lessons, setNumbeOfLessons] = useState("")
-  const [continuity, setContinuity] = useState("")
-  const [module, setModel] = useState("")
+  const [tip, setTip] = useState("");
+  const [number_of_lessons, setNumbeOfLessons] = useState("");
+  const [continuity, setContinuity] = useState("");
+  const [module, setModel] = useState("");
   const [stars, setStars] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");

@@ -80,71 +80,78 @@ const VideoManagement = () => {
         Add Video
       </Link>
       <div className="video-list">
-        {videos.map((video, index) => (
-          <div
-            key={video._id}
-            className={`video-card ${index % 2 === 0 ? "even" : "odd"}`}
-          >
-            <div>
-              <video width="320" height="240" controls>
-                <source src={video.file} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+        {videos.map((video, index) =>
+          !video.file ? (
+            <h1 key={index}>Loading</h1>
+          ) : (
+            <div
+              key={video._id}
+              className={`video-card ${index % 2 === 0 ? "even" : "odd"}`}
+            >
+              <div>
+                <video width="320" height="320" controls>
+                  <source
+                    src={`http://localhost:5000${video?.file}`}
+                    type="video/mp4"
+                  />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <div className="video-info">
+                <p>Name: {video?.name}</p>
+                <p>Hashtag: {video?.hashtag}</p>
+                <p>Turi: {video?.type_file}</p>
+                <p>Yulduzlar: {video?.stars}</p>
+              </div>
+              <div className="video-actions">
+                {selectedVideo && selectedVideo._id === video._id ? (
+                  <form onSubmit={handleUpdate}>
+                    <input
+                      type="text"
+                      placeholder="Name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="Hashtag"
+                      name="hashtag"
+                      value={formData.hashtag}
+                      onChange={handleChange}
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="Type"
+                      name="type_file"
+                      value={formData.type_file}
+                      onChange={handleChange}
+                      required
+                    />
+                    <input
+                      type="number"
+                      placeholder="Stars"
+                      name="stars"
+                      value={formData.stars}
+                      onChange={handleChange}
+                      required
+                    />
+                    <button type="submit">Update</button>
+                  </form>
+                ) : (
+                  <div className="gap">
+                    <button onClick={() => handleEdit(video)}>Edit</button>
+                    <button onClick={() => handleDelete(video._id)}>
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="video-info">
-              <p>Name: {video.name}</p>
-              <p>Hashtag: {video.hashtag}</p>
-              <p>Turi: {video.type_file}</p>
-              <p>Yulduzlar: {video.stars}</p>
-            </div>
-            <div className="video-actions">
-              {selectedVideo && selectedVideo._id === video._id ? (
-                <form onSubmit={handleUpdate}>
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Hashtag"
-                    name="hashtag"
-                    value={formData.hashtag}
-                    onChange={handleChange}
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Type"
-                    name="type_file"
-                    value={formData.type_file}
-                    onChange={handleChange}
-                    required
-                  />
-                  <input
-                    type="number"
-                    placeholder="Stars"
-                    name="stars"
-                    value={formData.stars}
-                    onChange={handleChange}
-                    required
-                  />
-                  <button type="submit">Update</button>
-                </form>
-              ) : (
-                <div className="gap">
-                  <button onClick={() => handleEdit(video)}>Edit</button>
-                  <button onClick={() => handleDelete(video._id)}>
-                    Delete
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
+          )
+        )}
       </div>
     </div>
   );
