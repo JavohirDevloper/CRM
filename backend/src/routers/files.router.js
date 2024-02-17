@@ -19,7 +19,7 @@ const limiter = rateLimit({
 
 router.post("/videos", limiter, createFile);
 router.get("/videos", limiter, getAllFile);
-router.get("/videos/:id", limiter, getFileByID);
+// router.get("/videos/:id", limiter, getFileByID);
 router.put("/videos/:id", limiter, updateFile);
 router.delete("/videos/:id", limiter, deleteFile);
 

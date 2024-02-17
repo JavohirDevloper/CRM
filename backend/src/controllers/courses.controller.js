@@ -11,17 +11,10 @@ const storage = multer.diskStorage({
   },
 });
 
-const coursesFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("videos/")) {
-    cb(null, true);
-  } else {
-    cb(new Error("Faqat video fayllariga ruxsat beriladi!"), false);
-  }
-};
+
 
 const upload = multer({
   storage: storage,
-  coursesFilter: coursesFilter,
 }).single("images");
 
 const createCourse = async (req, res) => {
@@ -34,9 +27,9 @@ const createCourse = async (req, res) => {
       if (!req.file) {
         return res.status(400).json({ error: "File is required" });
       }
-
-      const coursesData = {
-        courses_img: req.file.originalname,
+      console.log(req.file);
+       const coursesData = {
+        courses_img: req.file.path,
         courses_name: req.body.courses_name,
         title: req.body.title,
         description: req.body.description,
