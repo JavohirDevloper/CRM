@@ -12,6 +12,7 @@ import VideoUpload from "./components/Videos/VideoPost/Videos";
 import Video from "./components/Videos/VideoGet/Videos";
 import Courses from "./components/Courses/CoursesGet/Courses";
 import CreateCourse from "./components/Courses/CoursesPost/Courses";
+import NotFound from "./components/NotFound/NotFound";
 const App = () => {
   return (
     <>
@@ -25,8 +26,9 @@ const App = () => {
         <Route path="/admin/update/:adminId" element={<AdminUpdate />} />
         <Route path="/videos/create" element={<VideoUpload />} />
         <Route path="/videos" element={<Video />} />
-        <Route path="/courses" element={<Courses/>}/>
-        <Route path="/courses/create" element={<CreateCourse/>}/>
+        <Route path="/courses" element={<Courses />} />
+        <Route path="/courses/create" element={<CreateCourse />} />
+        <Route path="/*" element={<NotFound />} />
       </Routes>
     </>
   );
