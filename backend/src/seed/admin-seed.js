@@ -2,24 +2,24 @@ const { hashSync } = require("bcryptjs");
 
 const admins = [
   {
-    email: "muhammadiyev@gmail.com",
+    email: "kamron@gmail.com",
     role: "admin",
-    password: hashSync("1234", 10),
+    password: hashSync("admin1234", 10),
   },
   {
     email: "admin@gmail.com",
     role: "admin",
-    password: hashSync("1234", 10),
+    password: hashSync("admin1234", 10),
   },
   {
-    email: "jaxongir@gmail.com",
-    role: "admin",
-    password: hashSync("1234", 10),
+    email: "teacher@gmail.com",
+    role: "teacher",
+    password: hashSync("teacher1234", 10),
   },
   {
     email: "javohir@gmail.com",
-    role: "admin",
-    password: hashSync("1234", 10),
+    role: "teacher",
+    password: hashSync("teacher1234", 10),
   },
 ];
 

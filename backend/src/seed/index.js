@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const config = require("../shared/config");
 
 const Admin = require("../models/Admin");
-
 const AdminSeed = require("./admin-seed");
 
 const seedData = async () => {

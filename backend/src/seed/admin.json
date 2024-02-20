@@ -2,21 +2,21 @@
   {
     "email": "admin@gmail.com",
     "role": "admin",
-    "password": "1234"
+    "password": "admin1234"
   },
   {
-    "email": "muhammadiyevj768@gmail.com",
+    "email": "kamron@gmail.com",
     "role": "admin",
-    "password": "1234"
+    "password": "admin1234"
   },
   {
-    "email": "jaxongir@gmail.com",
-    "role": "admin",
-    "password": "1234"
+    "email": "teacher@gmail.com",
+    "role": "teacher",
+    "password": "teacher1234"
   },
   {
     "email": "javohir@gmail.com",
-    "role": "admin",
-    "password": "1234"
+    "role": "teacher",
+    "password": "teacher1234"
   }
 ]
