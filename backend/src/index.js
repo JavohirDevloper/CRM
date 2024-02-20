@@ -6,8 +6,10 @@ const db = require("./db/db");
 const handleError = require("./shared/errors/handle");
 const useragent = require("express-useragent");
 const path = require("path");
+
+
 // user routerlari
-const UserRouter = require("./routers/user.router");
+const UserEmailRouter = require("./routers/useremail.router");
 const AdminRouter = require("./routers/admin.router");
 const FileRouter = require("./routers/files.router");
 const CoursesRouter = require("./routers/courses.router");
@@ -24,7 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(useragent.express());
 // routes
-app.use(UserRouter);
+app.use(UserEmailRouter);
 app.use(AdminRouter);
 app.use(FileRouter);
 app.use(CoursesRouter);
