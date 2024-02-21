@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const UserController = require("../controllers/useremail.controller");
 const isLoggedIn = require("../shared/auth/isLoggedIn");
-
+const hasRole = require("../shared/auth/hasRole");
 const rateLimit = require("express-rate-limit");
 
 const limiter = rateLimit({
@@ -17,8 +17,8 @@ router.post("/user/register/by-email", UserController.registerAndLoginUser);
 router.get("/user/code/:code", UserController.getTokenByCode);
 
 // userlar uchun router
-router.get("/user/:id", isLoggedIn, limiter, UserController.getUserById);
-router.put("/user/:id", isLoggedIn, limiter, UserController.updateUser);
-router.delete("/user/:id", isLoggedIn, limiter, UserController.deleteUser);
+router.get("/user/:id", isLoggedIn, hasRole(["admin", "students"]), limiter, UserController.getUserById);
+router.put("/user/:id", isLoggedIn, hasRole(["admin", "students"]), limiter, UserController.updateUser);
+router.delete("/user/:id", isLoggedIn,hasRole(["admin", "students"]),  limiter, UserController.deleteUser);
 
 module.exports = router;
