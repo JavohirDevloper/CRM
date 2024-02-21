@@ -5,8 +5,8 @@ const hasRole = require("../shared/auth/hasRole");
 const router = express.Router();
 
 router.post("/courses", hasRole(["admin"]), coursesController.createCourse);
-router.get("/courses", hasRole(["admin", "user"]),coursesController.getAllCourses);
-router.get("/courses/:id", hasRole(["admin", "user"]),coursesController.getCourseById);
+router.get("/courses", hasRole(["admin", "teacher", "students"]),coursesController.getAllCourses);
+router.get("/courses/:id", hasRole(["admin", "teacher", "students"]),coursesController.getCourseById);
 router.put("/courses/:id",hasRole(["admin"]), coursesController.updateCourseById);
 router.delete("/courses/:id", hasRole(["admin"]),coursesController.deleteCourseById);
 
