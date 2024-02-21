@@ -19,7 +19,7 @@ const isLoggedIn = async (req, res, next) => {
       throw new UnauthorizedError("Unauthorized.");
     }
 
-    if (decoded.role === "admin" || decoded.role === "students" || decoded.) {
+    if (decoded.role === "admin" || decoded.role === "students" || decoded.role === "teacher") {
       req.user = decoded.user;
       return next();
     }
