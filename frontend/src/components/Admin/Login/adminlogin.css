@@ -1,14 +1,14 @@
-/* adminlogin.css */
-
 .admin-login-container {
-  max-width: 400px;
-  margin: 0 auto;
+  width: 300px;
+  margin: auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  background-color: #f9f9f9;
 }
 
 .admin-login-container h2 {
+  margin-bottom: 20px;
   text-align: center;
 }
 
@@ -17,23 +17,26 @@
   flex-direction: column;
 }
 
+.admin-login-container form div {
+  margin-bottom: 10px;
+}
+
 .admin-login-container label {
   margin-bottom: 5px;
 }
 
 .admin-login-container input {
   padding: 8px;
-  margin-bottom: 10px;
-  border-radius: 3px;
   border: 1px solid #ccc;
+  border-radius: 3px;
 }
 
 .admin-login-container button {
   padding: 10px;
-  background-color: #007bff;
-  color: #fff;
   border: none;
   border-radius: 3px;
+  background-color: #007bff;
+  color: #fff;
   cursor: pointer;
 }
 
@@ -44,5 +47,4 @@
 .error {
   color: red;
   margin-top: 10px;
-  text-align: center;
 }
