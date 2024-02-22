@@ -14,7 +14,7 @@ const limiter = rateLimit({
 
 // user authentication
 router.post("/user/register/by-email", UserController.registerAndLoginUser);
-router.get("/user/code/:code", UserController.getTokenByCode);
+router.post("/user/verify/", UserController.verifyEmailAndGenerateToken);
 
 // userlar uchun router
 router.get("/user/:id", isLoggedIn, hasRole(["admin", "students"]), limiter, UserController.getUserById);
