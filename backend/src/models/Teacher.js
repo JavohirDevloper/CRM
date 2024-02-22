@@ -13,7 +13,6 @@ const TeacherSchema = new mongoose.Schema(
     },
     role: {
       type: mongoose.SchemaTypes.String,
-      enum: ["admin", "teacher"],
       default: "teacher",
     },
   },
