@@ -51,6 +51,6 @@ const AdminLogin = () => {
       </form>
     </div>
   );
-};
+};  
 
 export default AdminLogin;
