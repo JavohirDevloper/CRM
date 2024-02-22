@@ -40,11 +40,9 @@ const registerAndLoginUser = async (req, res) => {
 
     await sendVerificationCode(email);
 
-    // Respond with the saved user
     res.status(201).json({ user: savedUser });
-    return savedUser;
   } catch (error) {
-    res.status(400).json({ error });
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -63,17 +61,16 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    const { first_name, email, password } = req.body;
+    const { email } = req.body;
 
     const savedUser = await registerAndLoginUser(req, res);
-
-    await sendVerificationCode(email);
 
     res.status(201).json({ user: savedUser });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
 const email_tokens = {};
 
 const sendVerificationCode = async (email) => {
@@ -84,9 +81,8 @@ const sendVerificationCode = async (email) => {
 
     email_tokens[email] = {
       code: verificationCode,
+      timestamp: Date.now(),
     };
-
-    console.log("Email tokens:", email_tokens);
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -99,8 +95,8 @@ const sendVerificationCode = async (email) => {
     const mailOptions = {
       from: "muhammadiyevj768@gmail.com",
       to: email,
-      subject: "Sizning tasdiqlash kodingiz",
-      text: `<h1>{verificationCode}</h1>`,
+      subject: "Tasdiqlash kodi",
+      text: `Sizning tasdiqlash kodingiz: ${verificationCode}`,
     };
 
     await transporter.sendMail(mailOptions);
@@ -108,21 +104,22 @@ const sendVerificationCode = async (email) => {
     console.log("Verification code sent successfully");
   } catch (error) {
     console.error("Error sending verification code:", error);
+    throw new Error("Error sending verification code");
   }
 };
 
-const getTokenByCode = async (req, res) => {
+const verifyEmailAndGenerateToken = async (req, res) => {
   try {
-    const { code } = req.params;
-    const { email } = req.body;
+    const { email, code } = req.body;
+    const emailTokens = email_tokens;
+    
+    const tokenData = emailTokens[email];
 
-    const tokenData = email_tokens[email];
-
-    console.log(tokenData);
-
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ email, code }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
+
+    delete emailTokens[email];
 
     res.status(200).json({ token });
   } catch (error) {
@@ -130,6 +127,7 @@ const getTokenByCode = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -218,7 +216,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   sendVerificationCode,
-  getTokenByCode,
+  verifyEmailAndGenerateToken,
   getUserById,
   updateUser,
   deleteUser,
