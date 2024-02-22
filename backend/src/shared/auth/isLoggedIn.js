@@ -1,7 +1,7 @@
 const express = require("express");
 const { UnauthorizedError } = require("../errors");
-const jwt = require("jsonwebtoken");
 const config = require("../config");
+const jwt = require("jsonwebtoken");
 
 /**
  *
@@ -12,25 +12,31 @@ const config = require("../config");
 
 const isLoggedIn = async (req, res, next) => {
   try {
+    // console.log(req.headers);
     const { access_token } = req.headers;
-    let decoded = jwt.verify(access_token, config.jwt.secret);
+    // console.log(access_token);
+    let token = jwt.verify(access_token, config.jwt.secret);
+    // console.log(token);
 
-    if (!decoded) {
+    if (!token) {
       throw new UnauthorizedError("Unauthorized.");
     }
 
-    if (decoded.role === "admin" || decoded.role === "students" || decoded.role === "teacher") {
-      req.user = decoded.user;
+    if (token.role === "admin" || token.role === "teacher" || token.role === "students") {
+      req.user = token.user;
       return next();
     }
+
+    console.log(token);
+
+    req.user = token.user;
 
     next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({ error: "Invalid token" });
+      return res.status(401).json({ error: "invalide token" });
     }
-    console.log(error);
-    res.status(400).json({ error: "Bad Request" });
+    res.status(400).json({ data: "serverda xatolik." });
   }
 };
 
