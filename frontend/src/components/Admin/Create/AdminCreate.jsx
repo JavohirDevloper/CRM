@@ -10,17 +10,20 @@ const AdminCreate = () => {
   const navigate = useNavigate();
 
   const handleCreateAdmin = async () => {
-    try {
-      const response = await axios.post("http://localhost:5000/admin", {
-        email,
-        password,
-      });
-      console.log(response);
-      toast.success("Admin qo'shildi");
-      navigate("/admin");
-    } catch (error) {
-      console.error(error);
-      toast.error("Admin qo'shishda xatolik yuz berdi");
+    const adminToken = localStorage.getItem("adminToken");
+    if (adminToken) {
+      try {
+        const response = await axios.post("http://localhost:5000/admin", {
+          email,
+          password,
+        });
+        console.log(response);
+        toast.success("Admin qo'shildi");
+        navigate("/admin");
+      } catch (error) {
+        console.error(error);
+        toast.error("Admin qo'shishda xatolik yuz berdi");
+      }
     }
   };
 
