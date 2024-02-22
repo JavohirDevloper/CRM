@@ -11,9 +11,33 @@ const limiter = rateLimit({
     "Foydalanuvchi hajmi limitga yetdi. Iltimos, keyinroq harakat qiling.",
 });
 
-router.post("/videos",isLoggedIn, hasRole(["admin"]),  limiter, fileController.createFile);
-router.get("/videos",isLoggedIn, hasRole(["admin", "students"]),  limiter, fileController.getAllFile);
-router.put("/videos/:id",isLoggedIn, hasRole(["admin"]),  limiter, fileController.updateFile);
-router.delete("/videos/:id",isLoggedIn, hasRole(["admin"]),  limiter, fileController.deleteFile);
+router.post(
+  "/videos",
+  isLoggedIn,
+  limiter,
+  fileController.createFile
+);
+
+router.get(
+  "/videos",
+  isLoggedIn,
+  hasRole(["admin", "students"]),
+  limiter,
+  fileController.getAllFile
+);
+router.put(
+  "/videos/:id",
+  isLoggedIn,
+  hasRole(["admin"]),
+  limiter,
+  fileController.updateFile
+);
+router.delete(
+  "/videos/:id",
+  isLoggedIn,
+  hasRole(["admin"]),
+  limiter,
+  fileController.deleteFile
+);
 
 module.exports = router;
