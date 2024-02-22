@@ -32,8 +32,7 @@ const UserEmailSchema = new mongoose.Schema(
     },
     role: {
       type: mongoose.SchemaTypes.String,
-      enum: ["user", "admin", "students"],
-      default: "user",
+      default: "students",
     },
   },
   {
