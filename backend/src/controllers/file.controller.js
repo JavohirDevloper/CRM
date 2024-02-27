@@ -83,7 +83,7 @@ const getAllFile = async (req, res) => {
       .exec();
     res.json(file);
   } catch (error) {
-    res.status(500).json({ error });
+    // res.status(500).json({ error });
   }
 };
 
