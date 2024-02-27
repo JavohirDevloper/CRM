@@ -8,6 +8,7 @@ const UserEmailSchema = new mongoose.Schema(
     },
     last_name: {
       type: mongoose.SchemaTypes.String,
+      required: true,
     },
     email: {
       type: mongoose.SchemaTypes.String,
@@ -26,9 +27,6 @@ const UserEmailSchema = new mongoose.Schema(
     gender: {
       type: mongoose.SchemaTypes.Boolean,
       enum: ["male", "female"],
-    },
-    date_of_birth: {
-      type: mongoose.SchemaTypes.Date,
     },
     role: {
       type: mongoose.SchemaTypes.String,
