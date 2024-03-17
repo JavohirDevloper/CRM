@@ -6,30 +6,14 @@ const fileSchema = new mongoose.Schema({
     required: true,
   },
   file: {
-    type: mongoose.SchemaTypes.String,
-  },
-  size_file: {
-    type: mongoose.SchemaTypes.Number,
-    // required: true,
-  },
-  hashtag: {
-    type: mongoose.SchemaTypes.String,
-    required: true,
+    type: [mongoose.SchemaTypes.String],
   },
   type_file: {
     type: mongoose.SchemaTypes.String,
-    required: true,
-  },
-  stars: {
-    type: mongoose.SchemaTypes.Number,
-    required: true,
-  },
-  user_ref_id: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: "User",
+    enum: ["mp4", "mp3"],
+    default: "mp4",
   },
 });
 
 const File = mongoose.model("File", fileSchema);
-
 module.exports = File;
