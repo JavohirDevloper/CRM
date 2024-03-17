@@ -3,8 +3,12 @@
   padding: 20px;
   width: 400px;
   border-radius: 5px;
+  background-color: #fff;
 }
+.d-flex{ 
+  background-color: #fff;
 
+}
 .text-center {
   text-align: center;
 }

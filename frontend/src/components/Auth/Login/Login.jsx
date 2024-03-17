@@ -29,8 +29,9 @@ const Login = () => {
         formData
       );
       console.log(response.data);
-      toast.success("You have successfully logged in");
-      navigate("/");
+      toast.success("Siz tizimga kirding!");
+      localStorage.setItem("token", response.data.token);
+      navigate("/dashboard");
     } catch (error) {
       console.error(error.response.data);
       toast.error("An error occurred while logging in");
