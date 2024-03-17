@@ -20,7 +20,7 @@ const limiter = rateLimit({
 });
 const mCoursesCreate = [isLoggedIn, limiter, hasRole(["admin"])];
 const mGetCourses = [isLoggedIn, limiter, hasRole(["student", "admin"])];
-const mGetCorsesById = [isLoggedIn, limiter, isMongoId, hasRole(["admin"])];
+const mGetCorsesById = [isLoggedIn, limiter, isMongoId, hasRole(["admin", "super_admin"])];
 const mUpdateCorsesById = [isLoggedIn, limiter, isMongoId, hasRole(["admin"])];
 const mDeleteCorsesById = [isLoggedIn, limiter, isMongoId, hasRole(["admin"])];
 
