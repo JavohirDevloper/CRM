@@ -2,8 +2,9 @@ const Teacher = require("../models/Teacher");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Joi = require("joi");
+const { BadRequestError } = require("../shared/errors");
 
-const TeacherLogin = async (req, res) => {
+const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const superTeacher = await Teacher.findOne({ email });
@@ -23,26 +24,45 @@ const TeacherLogin = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
 const createTeacher = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
   try {
+    if (role && role !== "teacher") {
+      throw new BadRequestError("This role Not Found!");
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const Teacher = new Teacher({ email, password: hashedPassword });
-    await Teacher.save();
-    res.status(201).json(Teacher);
+    const teacher = new Teacher({ email, password: hashedPassword });
+    await teacher.save();
+    res.status(201).json(teacher);
   } catch (error) {
     res.status(500).json(error);
   }
 };
+
 const getAllTeachers = async (req, res) => {
   try {
-    const Teachers = await Teacher.find();
+    const Teachers = await Teacher.find().select("-password");
     res.json(Teachers);
   } catch (error) {
     res.status(500).json(error);
   }
 };
-//  yangilash
+
+const getTeacherById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const teacher = await Teacher.findById(id).select("-password");
+    if (!teacher) {
+      return res.status(404).json({ error: "Teacher not found" });
+    }
+    res.status(200).json(teacher);
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+};
+
 const updateTeacher = async (req, res) => {
   try {
     const { id } = req.params;
@@ -66,20 +86,20 @@ const updateTeacher = async (req, res) => {
   }
 };
 
-//  o'chirish
 const deleteTeacher = async (req, res) => {
   try {
     const { id } = req.params;
-    await Teacher.findByIdAndDelete(id);
+    await Teacher.findByIdAndUpdate(id);
     res.status(200).json({ message: "Teacher deleted successfully" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 module.exports = {
-  TeacherLogin,
+  login,
   createTeacher,
   getAllTeachers,
+  getTeacherById,
   updateTeacher,
   deleteTeacher,
 };
