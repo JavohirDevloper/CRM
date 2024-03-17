@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const User = require("../models/User.js");
+const { NotFoundError } = require("../shared/errors/index.js");
 
 const register = async (req, res) => {
   try {
@@ -67,11 +68,15 @@ const login = async (req, res) => {
       return res.status(401).json({ error: "Invalid password" });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "4d",
+      }
+    );
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, role: user.role });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -79,7 +84,7 @@ const login = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const { first_name, last_name, email,password} = req.body
+    const { first_name, last_name, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       first_name,
@@ -90,7 +95,7 @@ const createUser = async (req, res) => {
     await user.save();
     res.status(201).json(user);
   } catch (error) {
-    res.status(500).json({error: error.message});
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -105,14 +110,12 @@ const getAllUser = async (req, res) => {
 
 const getUserMe = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.userId;
-
-    const user = await User.findById(userId).select("-password");
+    const userId = req.user._id;
+    const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      throw new NotFoundError("Not Found Students");
     }
+
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -177,20 +180,17 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findByIdAndDelete(id);
-    if (!user) {
-      return res.status(404).json({ success: false, error: "User not found" });
+    const deletedUser = await User.findByIdAndUpdate(
+      id,
+      { is_deleted: true },
+      { new: true }
+    );
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not found" });
     }
-    if (
-      user.images !==
-      "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
-    ) {
-      fs.unlinkSync(user.images);
-    }
-
-    res.status(200).json({ success: true, data: {} });
+    res.status(200).json({ message: "User deleted successfully", deletedUser });
   } catch (error) {
-    res.status(400).json({ success: false, error });
+    res.status(500).json({ error: error.message });
   }
 };
 
