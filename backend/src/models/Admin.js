@@ -13,7 +13,12 @@ const AdminSchema = new mongoose.Schema(
     },
     role: {
       type: mongoose.SchemaTypes.String,
+      enum: ["admin", "super_admin"],
       default: "admin",
+    },
+    is_deleted: {
+      type: mongoose.SchemaTypes.Boolean,
+      default: false,
     },
   },
   {

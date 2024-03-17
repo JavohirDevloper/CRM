@@ -32,9 +32,8 @@ const UserEmailSchema = new mongoose.Schema({
     default: "student",
   },
   is_deleted: {
-    type: mongoose.SchemaTypes.String,
-    enum: ["true", "false"],
-    default: "false",
+    type: mongoose.SchemaTypes.Boolean,
+    default: false,
   },
 });
 

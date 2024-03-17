@@ -25,6 +25,10 @@ const coursesSchema = new mongoose.Schema({
     type: mongoose.SchemaTypes.String,
     required: true,
   },
+  is_deleted: {
+    type: mongoose.SchemaTypes.Boolean,
+    default: false,
+  },
 });
 
 const Courses = mongoose.model("Courses", coursesSchema);

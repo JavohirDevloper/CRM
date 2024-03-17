@@ -20,6 +20,10 @@ const TeacherSchema = new mongoose.Schema(
       default:
         "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
     },
+    is_deleted: {
+      type: mongoose.SchemaTypes.Boolean,
+      default: false,
+    },
   },
   {
     versionKey: false,

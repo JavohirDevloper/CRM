@@ -10,13 +10,33 @@
     "password": "1234"
   },
   {
-    "email": "javoh@gmail.com",
+    "email": "saidqodirxon@gmail.com",
     "role": "admin",
     "password": "1234"
   },
   {
     "email": "ayubxon@gmail.com",
     "role": "admin",
+    "password": "1234"
+  },
+  {
+    "email": "turonbek@gmail.com",
+    "role": "super_admin",
+    "password": "1234"
+  },
+  {
+    "email": "muhammadjon@gmail.com",
+    "role": "super_admin",
+    "password": "1234"
+  },
+  {
+    "email": "mironshoh@gmail.com",
+    "role": "super_admin",
+    "password": "1234"
+  },
+  {
+    "email": "superadmin@gmail.com",
+    "role": "super_admin",
     "password": "1234"
   }
 ]
