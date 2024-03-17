@@ -6,6 +6,7 @@ const {
   getAllFile,
   updateFile,
   deleteFile,
+  streamFile,
 } = require("../controllers/file.controller.js");
 const isLoggedIn = require("../shared/auth/isLoggedIn");
 const hasRole = require("../shared/auth/hasRole");
@@ -18,12 +19,13 @@ const limiter = rateLimit({
     "Foydalanuvchi hajmi limitga yetdi. Iltimos, keyinroq harakat qiling.",
 });
 
-const mCreateVideo = [isLoggedIn, limiter, hasRole(["admin"])];
-const mFindVideo = [isLoggedIn, limiter, hasRole(["student", "admin"])];
-const mUpdateVideo = [isLoggedIn, limiter, isMongoId, hasRole(["admin"])];
-const mDeleteVideo = [isLoggedIn, limiter, isMongoId, hasRole(["admin"])];
+const mCreateVideo = [isLoggedIn, limiter, hasRole(["admin", "super_admin"])];
+const mFindVideo = [isLoggedIn, limiter, hasRole(["student", "admin", "super_admin"])];
+const mUpdateVideo = [isLoggedIn, limiter, isMongoId, hasRole(["admin", "super_admin"])];
+const mDeleteVideo = [isLoggedIn, limiter, isMongoId, hasRole(["admin", "super_admin"])];
 
 router.post("/videos", mCreateVideo, createFile);
+router.get("/videos/:filename", streamFile);
 router.get("/videos",mFindVideo,  getAllFile);
 router.put("/videos/:id", mUpdateVideo, updateFile);
 router.delete("/videos/:id", mDeleteVideo, deleteFile);
