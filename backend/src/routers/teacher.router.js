@@ -22,11 +22,11 @@ const limiter = rateLimit({
     "Foydalanuvchi hajmi limitga yetdi. Iltimos, keyinroq harakat qiling.",
 });
 
-const mTeacherCreate = [isLoggedIn, limiter, hasRole(["admin"])];
-const mFindTeacher = [isLoggedIn,limiter, hasRole(["admin", "teacher"])]
-const mFindByIdTeacher = [isLoggedIn,limiter, isMongoId, hasRole(["admin", "teacher"])]
-const mUpdateByIdTeacher = [isLoggedIn,limiter, isMongoId, hasRole(["admin", "teacher"])]
-const mDeleteTeacher = [isLoggedIn, limiter, isMongoId, hasRole(["teacher", "admin"])]
+const mTeacherCreate = [isLoggedIn, limiter, hasRole(["admin", "super_admin"])];
+const mFindTeacher = [isLoggedIn,limiter, hasRole(["admin","super_admin", "teacher"])]
+const mFindByIdTeacher = [isLoggedIn,limiter, isMongoId, hasRole(["admin","super_admin", "teacher"])]
+const mUpdateByIdTeacher = [isLoggedIn,limiter, isMongoId, hasRole(["admin", "super_admin", "teacher"])]
+const mDeleteTeacher = [isLoggedIn, limiter, isMongoId, hasRole(["teacher", "admin", "super_admin"])]
 
 router.post("/teacher/login", login);
 router.post("/teacher", mTeacherCreate, createTeacher);
