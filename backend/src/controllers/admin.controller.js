@@ -2,7 +2,40 @@ const Admin = require("../models/Admin");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Joi = require("joi");
-const { BadRequestError } = require("../shared/errors/index");
+
+const registerAdmin = async (req, res) => {
+  try {
+    const schema = Joi.object({
+      email: Joi.string().email().required(),
+      password: Joi.string().min(4).required(),
+    });
+
+    const { error } = schema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+
+    const { email, password } = req.body;
+
+    const existingAdmin = await Admin.findOne({ email }).select("-password");
+    if (existingAdmin) {
+      return res.status(409).json({ error: "Email already exists" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    const newAdmin = new Admin({
+      email,
+      password: hashedPassword,
+    });
+    const savedAdmin = await newAdmin.save();
+
+    res.status(201).json({ admin: savedAdmin });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
@@ -15,12 +48,28 @@ const loginAdmin = async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const token = jwt.sign({ id: superAdmin._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      { id: superAdmin._id, role: superAdmin.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "4d",
+      }
+    );
     res.json({ token });
   } catch (error) {
     console.error(error);
+    res.status(500).json(error);
+  }
+};
+
+const createAdmin = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const admin = new Admin({ email, password: hashedPassword });
+    await admin.save();
+    res.status(201).json(admin);
+  } catch (error) {
     res.status(500).json(error);
   }
 };
@@ -73,14 +122,25 @@ const updateAdmin = async (req, res) => {
 const deleteAdmin = async (req, res) => {
   try {
     const { id } = req.params;
-    await Admin.findByIdAndDelete(id);
-    res.status(200).json({ message: "Admin deleted successfully" });
+    const deletedAdmin = await Admin.findByIdAndUpdate(
+      id,
+      { is_deleted: true },
+      { new: true }
+    );
+    if (!deletedAdmin) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+    res
+      .status(200)
+      .json({ message: "Admin deleted successfully", deletedAdmin });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 module.exports = {
+  registerAdmin,
   loginAdmin,
+  createAdmin,
   getAllAdmins,
   getFindById,
   updateAdmin,
