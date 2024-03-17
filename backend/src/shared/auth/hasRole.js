@@ -11,14 +11,10 @@ const { ForbiddenError } = require("../errors");
 const hasRole = (roles) => {
   return async (req, res, next) => {
     try {
-      if (!req.user || !req.user.role) {
-        throw new UnauthorizedError("User role is not defined.");
-      }
-
       const { role } = req.user;
-      console.log(role);
+      console.log(req.user);
       if (!roles.includes(role)) {
-        throw new UnauthorizedError(`This ${role} is not allowed this right!`);
+        throw new ForbiddenError(`This ${role} is not allowed this right!`);
       }
 
       next();
@@ -27,6 +23,5 @@ const hasRole = (roles) => {
     }
   };
 };
-
 
 module.exports = hasRole;
