@@ -11,8 +11,6 @@ const storage = multer.diskStorage({
   },
 });
 
-
-
 const upload = multer({
   storage: storage,
 }).single("images");
@@ -23,21 +21,17 @@ const createCourse = async (req, res) => {
       if (err) {
         return res.status(400).json({ error: err.message });
       }
-    //   console.log(req.body);
       if (!req.file) {
         return res.status(400).json({ error: "File is required" });
       }
       console.log(req.file);
-       const coursesData = {
+      const coursesData = {
         courses_img: req.file.path,
         courses_name: req.body.courses_name,
-        title: req.body.title,
+        category: req.body.category,
         description: req.body.description,
-        tip: req.body.tip,
-        number_of_lessons: req.body.number_of_lessons,
-        continuity: req.body.continuity,
         module: req.body.module,
-        stars: req.body.stars,
+        number_of_lessons: req.body.number_of_lessons,
       };
 
       const courses = new Courses(coursesData);
@@ -78,7 +72,8 @@ const getCourseById = async (req, res) => {
 
 const updateCourseById = async (req, res) => {
   try {
-    const course = await Courses.findByIdAndUpdate(req.params.id, req.body, {
+    const { id } = params.id;
+    const course = await Courses.findByIdAndUpdate(id, req.body, {
       new: true,
     });
     if (!course) {
@@ -96,7 +91,7 @@ const deleteCourseById = async (req, res) => {
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
-    res.status(204).send();
+    res.status(200).send("Corrses delete successfully");
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
