@@ -5,7 +5,7 @@ const coursesSchema = new mongoose.Schema({
     type: mongoose.SchemaTypes.String,
     required: true,
   },
-  courses_img: {
+  images: {
     type: mongoose.SchemaTypes.String,
     required: true,
   },
