@@ -2,8 +2,9 @@ const Admin = require("../models/Admin");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Joi = require("joi");
+const { BadRequestError } = require("../shared/errors/index");
 
-const AdminLogin = async (req, res) => {
+const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const superAdmin = await Admin.findOne({ email });
@@ -23,17 +24,7 @@ const AdminLogin = async (req, res) => {
     res.status(500).json(error);
   }
 };
-const createAdmin = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const admin = new Admin({ email, password: hashedPassword });
-    await admin.save();
-    res.status(201).json(admin);
-  } catch (error) {
-    res.status(500).json(error);
-  }
-};
+
 const getAllAdmins = async (req, res) => {
   try {
     const admins = await Admin.find();
@@ -42,7 +33,20 @@ const getAllAdmins = async (req, res) => {
     res.status(500).json(error);
   }
 };
-//  yangilash
+
+const getFindById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const admin = await Admin.findById(id);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+    res.json(admin);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 const updateAdmin = async (req, res) => {
   try {
     const { id } = req.params;
@@ -66,7 +70,6 @@ const updateAdmin = async (req, res) => {
   }
 };
 
-//  o'chirish
 const deleteAdmin = async (req, res) => {
   try {
     const { id } = req.params;
@@ -77,9 +80,9 @@ const deleteAdmin = async (req, res) => {
   }
 };
 module.exports = {
-  AdminLogin,
-  createAdmin,
+  loginAdmin,
   getAllAdmins,
+  getFindById,
   updateAdmin,
   deleteAdmin,
 };
