@@ -26,7 +26,7 @@ const createCourse = async (req, res) => {
       }
       console.log(req.file);
       const coursesData = {
-        courses_img: req.file.path,
+        images: req.file.path,
         courses_name: req.body.courses_name,
         category: req.body.category,
         description: req.body.description,
@@ -72,31 +72,35 @@ const getCourseById = async (req, res) => {
 
 const updateCourseById = async (req, res) => {
   try {
-    const { id } = params.id;
-    const course = await Courses.findByIdAndUpdate(id, req.body, {
+    const { id } = req.params;
+    const updatedCourses = await Courses.findByIdAndUpdate(id, req.body, {
       new: true,
     });
-    if (!course) {
-      return res.status(404).json({ message: "Course not found" });
+    if (!updatedCourses) {
+      return res.status(404).json({ error: "Courses not found" });
     }
-    res.status(200).json(course);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.json(updatedCourses);
+  } catch (error) {
+    res.status(500).json({ error });
   }
 };
 
 const deleteCourseById = async (req, res) => {
   try {
-    const course = await Courses.findByIdAndDelete(req.params.id);
-    if (!course) {
-      return res.status(404).json({ message: "Course not found" });
+    const { id } = req.params;
+    const deletedCourses = await Courses.findByIdAndDelete(id, {
+      is_deleted: true,
+    });
+    if (!deletedCourses) {
+      return res.status(404).json({ error: "Courses not found" });
     }
-    res.status(200).send("Corrses delete successfully");
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    res
+      .status(200)
+      .json({ message: "Courses deleted successfully", deletedCourses });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
-
 module.exports = {
   createCourse,
   getCourseById,
