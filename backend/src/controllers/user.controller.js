@@ -3,15 +3,13 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
-const User = require("../models/UserEmail.js");
+const User = require("../models/User.js");
 
-const registerAndLoginUser = async (req, res) => {
+const register = async (req, res) => {
   try {
     const schema = Joi.object({
       first_name: Joi.string().required(),
-      last_name: Joi.string(),
-      date_of_birth: Joi.date(),
-      phone_number: Joi.string(),
+      last_name: Joi.string().required(),
       email: Joi.string().email().required(),
       password: Joi.string().min(4).required(),
     });
@@ -21,7 +19,7 @@ const registerAndLoginUser = async (req, res) => {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    const { first_name, email, password } = req.body;
+    const { first_name, last_name, email, password } = req.body;
 
     const existingUser = await User.findOne({ email }).select("-password");
     if (existingUser) {
@@ -34,11 +32,10 @@ const registerAndLoginUser = async (req, res) => {
     const newUser = new User({
       first_name,
       email,
+      last_name,
       password: hashedPassword,
     });
     const savedUser = await newUser.save();
-
-    await sendVerificationCode(email);
 
     res.status(201).json({ user: savedUser });
   } catch (error) {
@@ -46,84 +43,78 @@ const registerAndLoginUser = async (req, res) => {
   }
 };
 
-const registerUser = async (req, res) => {
+const login = async (req, res) => {
   try {
     const schema = Joi.object({
-      first_name: Joi.string().required(),
-      last_name: Joi.string(),
-      date_of_birth: Joi.date(),
-      phone_number: Joi.string(),
       email: Joi.string().email().required(),
-      password: Joi.string().min(4).required(),
+      password: Joi.string().required(),
     });
+
     const { error } = schema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    const { email } = req.body;
+    const { email, password } = req.body;
 
-    const savedUser = await registerAndLoginUser(req, res);
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-    res.status(201).json({ user: savedUser });
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.status(200).json({ token });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-const email_tokens = {};
-
-const sendVerificationCode = async (email) => {
+const createUser = async (req, res) => {
   try {
-    const verificationCode = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
-
-    email_tokens[email] = {
-      code: verificationCode,
-      timestamp: Date.now(),
-    };
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "muhammadiyevj768@gmail.com",
-        pass: "zweqeoqtijymkleh",
-      },
+    const { first_name, last_name, email,password} = req.body
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({
+      first_name,
+      last_name,
+      email,
+      password: hashedPassword,
     });
-
-    const mailOptions = {
-      from: "muhammadiyevj768@gmail.com",
-      to: email,
-      subject: "Tasdiqlash kodi",
-      text: `Sizning tasdiqlash kodingiz: ${verificationCode}`,
-    };
-
-    await transporter.sendMail(mailOptions);
-
-    console.log("Verification code sent successfully");
+    await user.save();
+    res.status(201).json(user);
   } catch (error) {
-    console.error("Error sending verification code:", error);
-    throw new Error("Error sending verification code");
+    res.status(500).json({error: error.message});
   }
 };
 
-const verifyEmailAndGenerateToken = async (req, res) => {
+const getAllUser = async (req, res) => {
   try {
-    const { email, code } = req.body;
-    const emailTokens = email_tokens;
-    
-    const tokenData = emailTokens[email];
-
-    const token = jwt.sign({ email, code }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-
-    delete emailTokens[email];
-
-    res.status(200).json({ token });
+    const user = await User.find().select("-password");
+    res.json(user);
   } catch (error) {
-    console.error("Error:", error);
+    res.satus(404).json({ error });
+  }
+};
+
+const getUserMe = async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
@@ -144,22 +135,11 @@ const getUserById = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      first_name,
-      last_name,
-      date_of_birth,
-      gender,
-      phone_number,
-      email,
-      password,
-    } = req.body;
+    const { first_name, last_name, email, password } = req.body;
 
     let updateData = {
       last_name,
       first_name,
-      date_of_birth,
-      gender,
-      phone_number,
       email,
       password,
     };
@@ -215,11 +195,12 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
-  sendVerificationCode,
-  verifyEmailAndGenerateToken,
+  createUser,
+  getAllUser,
   getUserById,
+  getUserMe,
   updateUser,
   deleteUser,
-  registerUser,
-  registerAndLoginUser,
+  login,
+  register,
 };
