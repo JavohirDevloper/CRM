@@ -9,7 +9,7 @@ const path = require("path");
 
 
 // user routerlari
-const UserEmailRouter = require("./routers/useremail.router");
+const UserEmailRouter = require("./routers/user.router");
 const AdminRouter = require("./routers/admin.router");
 const FileRouter = require("./routers/files.router");
 const CoursesRouter = require("./routers/courses.router");
