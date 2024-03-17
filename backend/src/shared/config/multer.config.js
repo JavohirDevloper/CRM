@@ -2,7 +2,7 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "/upload/");
+    cb(null, "public/");
   },
   filename: function (req, file, cb) {
     const trimmedFileName = file.originalname.replace(/\s+/g, "").toLowerCase();
@@ -14,7 +14,7 @@ const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("video/")) {
     cb(null, true);
   } else {
-    cb(new Error("Faqat video fayllariga ruxsat beriladi!"), false);
+    cb(new Error("Only images are allowed!"), false);
   }
 };
 
