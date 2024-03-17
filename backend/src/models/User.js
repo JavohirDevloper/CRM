@@ -24,8 +24,9 @@ const UserEmailSchema = new mongoose.Schema({
       "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
   },
   gender: {
-    type: mongoose.SchemaTypes.Boolean,
+    type: mongoose.SchemaTypes.String,
     enum: ["male", "female"],
+    default: "male",
   },
   role: {
     type: mongoose.SchemaTypes.String,
