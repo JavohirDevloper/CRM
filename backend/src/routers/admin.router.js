@@ -1,15 +1,26 @@
 const express = require("express");
 const router = express.Router();
-const AdminController = require("../controllers/admin.controller");
+const {
+  createAdmin,
+  getAllAdmins,
+  updateAdmin,
+  deleteAdmin,
+  loginAdmin,
+  getFindById,
+} = require("../controllers/admin.controller");
 const isLoggedIn = require("../shared/auth/isLoggedIn");
 const hasRole = require("../shared/auth/hasRole");
-// admin login
-router.post("/admin/login", AdminController.AdminLogin);
+const isMongoId = require("../shared/validator/isMongoId");
 
-// Admin
-router.post("/admin",isLoggedIn, hasRole(["admin"]), AdminController.createAdmin);
-router.get("/admin",isLoggedIn, hasRole(["admin"]),  AdminController.getAllAdmins);
-router.put("/admin/:id",isLoggedIn, hasRole(["admin"]),  AdminController.updateAdmin);
-router.delete("/admin/:id",isLoggedIn, hasRole(["admin"]),  AdminController.deleteAdmin);
+const mGetAllAdmins = [isLoggedIn, hasRole(["admin"])];
+const mGetByIdAdmin = [isLoggedIn, isMongoId, hasRole(["admin"])];
+const mUpdateAdmin = [isLoggedIn, isMongoId, hasRole(["admin"])];
+const mDeleteAdmin = [isLoggedIn, isMongoId, hasRole(["admin"])];
+
+router.post("/admin/login", loginAdmin);
+router.get("/admin", mGetAllAdmins, getAllAdmins);
+router.get("/admin/:id", mGetByIdAdmin, getFindById);
+router.put("/admin/:id", mUpdateAdmin, updateAdmin);
+router.delete("/admin/:id", mDeleteAdmin, deleteAdmin);
 
 module.exports = router;
