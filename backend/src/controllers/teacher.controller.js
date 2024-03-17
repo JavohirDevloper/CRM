@@ -2,7 +2,6 @@ const Teacher = require("../models/Teacher");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Joi = require("joi");
-const { BadRequestError } = require("../shared/errors");
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -15,9 +14,13 @@ const login = async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const token = jwt.sign({ id: superTeacher._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      { id: superTeacher._id, role: superTeacher.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "4d",
+      }
+    );
     res.json({ token });
   } catch (error) {
     console.error(error);
@@ -26,12 +29,8 @@ const login = async (req, res) => {
 };
 
 const createTeacher = async (req, res) => {
-  const { email, password, role } = req.body;
+  const { email, password } = req.body;
   try {
-    if (role && role !== "teacher") {
-      throw new BadRequestError("This role Not Found!");
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
     const teacher = new Teacher({ email, password: hashedPassword });
     await teacher.save();
@@ -89,10 +88,17 @@ const updateTeacher = async (req, res) => {
 const deleteTeacher = async (req, res) => {
   try {
     const { id } = req.params;
-    await Teacher.findByIdAndUpdate(id);
-    res.status(200).json({ message: "Teacher deleted successfully" });
+    const deletedTeacher = await Teacher.findByIdAndDelete(id, {
+      is_deleted: true,
+    });
+    if (!deletedTeacher) {
+      return res.status(404).json({ error: "Teacher not found" });
+    }
+    res
+      .status(200)
+      .json({ message: "Teacher deleted successfully", deletedTeacher });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 module.exports = {
