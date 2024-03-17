@@ -2,9 +2,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard/Dashboard";
-import Register from "./components/Register/Register";
-import Sigup from "./components/Auth/Register"
-import Verify from "./components/Verify/Verify";
+import Register from "./components/Auth/Register/Register";
 import Admin from "./components/Admin/Admin/Admin";
 import AdminLogin from "./components/Admin/Login/AdminLogin";
 import AdminCreate from "./components/Admin/Create/AdminCreate";
@@ -14,13 +12,19 @@ import Video from "./components/Videos/VideoGet/Videos";
 import Courses from "./components/Courses/CoursesGet/Courses";
 import CreateCourse from "./components/Courses/CoursesPost/Courses";
 import NotFound from "./components/NotFound/NotFound";
+import Login from "./components/Auth/Login/Login";
+import Notfication from "./components/Notfication/Notfication";
+import Settings from "./components/Settings/Settings";
+import Messages from "./components/Messages/Messages";
+// eslint-disable-next-line react/prop-types
 const App = () => {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/user/register" element={<Register />} />
-        <Route path="/user/verify" element={<Verify />} />
+        <Route path="/dashboard" element={<Dashboard/>} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/create" element={<AdminCreate />} />
@@ -30,7 +34,8 @@ const App = () => {
         <Route path="/courses" element={<Courses />} />
         <Route path="/courses/create" element={<CreateCourse />} />
         <Route path="/*" element={<NotFound />} />
-        <Route path="/auth/register" element={<Sigup/>}/>
+        <Route path="/notfication" element={<Notfication />} />
+        <Route path="/messages" element={<Messages/>}/>
       </Routes>
     </>
   );
