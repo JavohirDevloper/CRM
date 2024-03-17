@@ -23,18 +23,18 @@ const limiter = rateLimit({
     "Foydalanuvchi hajmi limitga yetdi. Iltimos, keyinroq harakat qiling.",
 });
 
-const mCreateUserAdmin = [isLoggedIn, limiter, hasRole(["admin"])];
-const mUserAdminFind = [isLoggedIn, limiter, hasRole(["admin"])];
-const mUserAdminFindById = [isLoggedIn, limiter, hasRole(["admin"])];
+const mCreateUserAdmin = [isLoggedIn, limiter, hasRole(["admin","super_admin"])];
+const mUserAdminFind = [isLoggedIn, limiter, hasRole(["admin", "super_admin"])];
+const mUserAdminFindById = [isLoggedIn, limiter, hasRole(["admin", "super_admin"])];
 const mUserGetMe = [isLoggedIn, limiter, hasRole(["student"])];
-const mDeleteMe = [isLoggedIn, limiter, hasRole(["student"])];
-const mUserAdminDelete = [isLoggedIn, isMongoId, limiter, hasRole(["admin"])];
+const mUserUpdateAdmin = [isLoggedIn, isMongoId, limiter, hasRole(["admin","super_admin"])];
 const mUserUpdateMe = [isLoggedIn, limiter, hasRole(["student"])];
-const mUserUpdateAdmin = [isLoggedIn, isMongoId, limiter, hasRole(["admin"])];
+const mUserAdminDelete = [isLoggedIn, isMongoId, limiter, hasRole(["admin","super_admin"])];
+const mDeleteMe = [isLoggedIn, limiter, hasRole(["student"])];
 
 router.post("/user/register", register);
 router.post("/user/login", login);
-router.post("/user", createUser );
+router.post("/user",mCreateUserAdmin, createUser );
 router.get("/user", mUserAdminFind, getAllUser);
 router.get("/user/:id", mUserAdminFindById, getUserById);
 router.get("/user/me",mUserGetMe, getUserMe);
