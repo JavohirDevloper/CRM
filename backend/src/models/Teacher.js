@@ -15,6 +15,11 @@ const TeacherSchema = new mongoose.Schema(
       type: mongoose.SchemaTypes.String,
       default: "teacher",
     },
+    images: {
+      type: mongoose.SchemaTypes.String,
+      default:
+        "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+    },
   },
   {
     versionKey: false,
