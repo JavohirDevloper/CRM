@@ -27,11 +27,7 @@ const upload = multer({
 
 const fileValidationSchema = Joi.object({
   name: Joi.string().required(),
-  hashtag: Joi.string(),
-  size_file: Joi.number(),
   type_file: Joi.string(),
-  stars: Joi.number(),
-  user_ref_id: Joi.string(),
 });
 
 const createFile = async (req, res) => {
@@ -52,13 +48,9 @@ const createFile = async (req, res) => {
       }
 
       const fileData = {
-        name: req.file.originalname,
+        name: req.body.name,
         file: "/" + req.file.path,
-        size_file: req.body.size_file,
-        hashtag: req.body.hashtag,
         type_file: req.body.type_file,
-        stars: req.body.stars,
-        user_ref_id: req.body.user_ref_id,
       };
 
       const file = new File(fileData);
@@ -78,19 +70,17 @@ const createFile = async (req, res) => {
 
 const getAllFile = async (req, res) => {
   try {
-    const file = await File.find()
-      .populate([{ path: "user_ref_id" }])
-      .exec();
+    const file = await File.find();
     res.json(file);
   } catch (error) {
-    // res.status(500).json({ error });
+    res.status(500).json({ error });
   }
 };
 
 const getFileByID = async (req, res) => {
   try {
     const { id } = req.params;
-    const file = await File.findById(id).populate("user_ref_id");
+    const file = await File.findById(id);
     if (!file) {
       return res.status(404).json({ error: "File not found" });
     }
@@ -102,8 +92,8 @@ const getFileByID = async (req, res) => {
 
 const updateFile = async (req, res) => {
   try {
-    const fileId = req.params.id;
-    const updatedFile = await File.findByIdAndUpdate(fileId, req.body, {
+    const { id } = req.params;
+    const updatedFile = await File.findByIdAndUpdate(id, req.body, {
       new: true,
     });
     if (!updatedFile) {
