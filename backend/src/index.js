@@ -4,7 +4,6 @@ const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const db = require("./db/db");
 const handleError = require("./shared/errors/handle");
-const useragent = require("express-useragent");
 const path = require("path");
 
 
@@ -14,6 +13,7 @@ const AdminRouter = require("./routers/admin.router");
 const FileRouter = require("./routers/files.router");
 const CoursesRouter = require("./routers/courses.router");
 const TeacherRouter = require("./routers/teacher.router");
+const NotificationRouter = require("./routers/notification.router")
 dotenv.config();
 const app = express();
 // app use
@@ -24,13 +24,13 @@ app.get("/videos/:filename", (req, res) => {
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(useragent.express());
 // routes
 app.use(UserEmailRouter);
 app.use(AdminRouter);
 app.use(FileRouter);
 app.use(CoursesRouter);
 app.use(TeacherRouter);
+app.use(NotificationRouter)
 // databaza
 db();
 
