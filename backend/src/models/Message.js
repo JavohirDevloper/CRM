@@ -7,7 +7,7 @@ const messageSchema = new mongoose.Schema(
       ref: "User",
     },
     message: {
-      type:  mongoose.Schema.Types.String,
+      type: String,
       trim: true,
     },
     chatId: {
@@ -19,6 +19,7 @@ const messageSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-const messageModel = mongoose.model("Message", messageSchema);
 
-module.exports = { messageModel };
+const Message = mongoose.model("Message", messageSchema);
+
+module.exports = Message;
