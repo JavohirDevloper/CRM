@@ -18,14 +18,14 @@ const limiter = rateLimit({
     "Foydalanuvchi hajmi limitga yetdi. Iltimos, keyinroq harakat qiling.",
 });
 
-const MFindMessages = [isLoggedIn, limiter, isMongoId, hasRole(["student"])];
+const MFindMessages = [isLoggedIn, limiter, hasRole(["student"])];
 const MAddMessages = [isLoggedIn, limiter, hasRole(["student"])];
-const MUpdateMessages = [isLoggedIn, limiter, isMongoId, hasRole(["student"])];
-const MDeleteMessages = [isLoggedIn, limiter, isMongoId, hasRole(["student"])];
+const MUpdateMessages = [isLoggedIn, limiter, hasRole(["student"])];
+const MDeleteMessages = [isLoggedIn, limiter, hasRole(["student"])];
 
-router.get("/message/:chatId", MFindMessages, getMessages);
-router.post("/message", MAddMessages, sendMessage);
-router.put("/message/:messageId", MUpdateMessages, updateMessage);
-router.delete("/message/:messageId", MDeleteMessages, deleteMessage);
+router.get("/messages/:chatId", MFindMessages, getMessages);
+router.post("/messages", MAddMessages, sendMessage);
+router.put("/messages/:messageId", MUpdateMessages, updateMessage);
+router.delete("/messages/:messageId", MDeleteMessages, deleteMessage);
 
 module.exports = router;
