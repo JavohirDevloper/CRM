@@ -52,7 +52,7 @@ const loginAdmin = async (req, res) => {
       { id: superAdmin._id, role: superAdmin.role },
       process.env.JWT_SECRET,
       {
-        expiresIn: "4d",
+        expiresIn: "1d",
       }
     );
     res.json({ token });
