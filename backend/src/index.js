@@ -15,6 +15,7 @@ const CoursesRouter = require("./routers/courses.router");
 const TeacherRouter = require("./routers/teacher.router");
 const NotificationRouter = require("./routers/notification.router");
 const MessageRouter = require("./routers/message.router");
+const ChatsRouter = require("./routers/chats.router");
 dotenv.config();
 const app = express();
 // app use
@@ -33,6 +34,7 @@ app.use(CoursesRouter);
 app.use(TeacherRouter);
 app.use(NotificationRouter);
 app.use(MessageRouter);
+app.use(ChatsRouter);
 // databaza
 db();
 
@@ -84,12 +86,12 @@ io.on("connection", async (socket) => {
       socket.emit("connected");
     });
 
-    socket.on("join room", (room) => {
-      socket.join(room);
+    socket.on("join video", (video) => {
+      socket.join(video);
     });
 
-    socket.on("typing", (room) => socket.in(room).emit("typing"));
-    socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+    socket.on("typing", (video) => socket.in(video).emit("typing"));
+    socket.on("stop typing", (video) => socket.in(video).emit("stop typing"));
 
     socket.on("new file message", async (data) => {
       const { filename, message, chatId } = data;
@@ -107,9 +109,9 @@ io.on("connection", async (socket) => {
         select: "chatName isGroup users",
         model: "Chat",
         populate: {
-          path: "student",
+          path: "users",
           select: "fullname phone_number profilePic",
-          model: "Student",
+          model: "User",
         },
       });
       await chatModel.findByIdAndUpdate(chatId, {
@@ -144,9 +146,9 @@ io.on("connection", async (socket) => {
         select: "chatName isGroup users",
         model: "Chat",
         populate: {
-          path: "student",
+          path: "users",
           select: "fullname phone_number profilePic",
-          model: "Student",
+          model: "User",
         },
       });
       await chatModel.findByIdAndUpdate(chatId, {
