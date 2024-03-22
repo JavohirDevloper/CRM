@@ -1,5 +1,5 @@
-const Chat = require("../models/Chats");
-const Message = require("../models/Message");
+const { chatModel } = require("../models/Chats");
+const { Message } = require("../models/Message");
 
 const getMessages = async (req, res) => {
   try {
@@ -24,15 +24,18 @@ const getMessages = async (req, res) => {
 const sendMessage = async (req, res) => {
   try {
     const { chatId, message, blogo_id, ...rest } = req.body;
-    const msg = await Message.create({
-      sender: req.user.userId, 
+    let newMsg = await Message.create({
+      sender: req.user._id,
       message,
       chatId,
       ...rest,
     });
 
-    const populatedMessage = await msg
+    newMsg = await newMsg
       .populate("sender", "fullname profilePic phone_number")
+      .exec();
+
+    newMsg = await newMsg
       .populate({
         path: "chatId",
         select: "chatName isGroup users",
@@ -43,21 +46,22 @@ const sendMessage = async (req, res) => {
           model: "User",
         },
       })
-      .execPopulate();
+      .exec();
 
-    await Chat.findByIdAndUpdate(chatId, {
-      latestMessage: populatedMessage,
+    await chatModel.findByIdAndUpdate(chatId, {
+      latestMessage: newMsg,
     });
 
-    res.json(populatedMessage);
+    res.json(newMsg);
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 };
+
 const updateMessage = async (req, res) => {
   try {
     const { messageId } = req.params;
-    const { updateData } = req.body;
+    const updateData = req.body;
 
     const updatedMessage = await Message.findByIdAndUpdate(
       messageId,
@@ -71,7 +75,7 @@ const updateMessage = async (req, res) => {
 
     res.json(updatedMessage);
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -87,7 +91,7 @@ const deleteMessage = async (req, res) => {
 
     res.json(deletedMessage);
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 };
 
