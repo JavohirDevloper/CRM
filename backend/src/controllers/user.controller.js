@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
-const User = require("../models/User.js");
+const { User } = require("../models/User.js");
 const { NotFoundError } = require("../shared/errors/index.js");
 
 const register = async (req, res) => {
@@ -72,7 +72,7 @@ const login = async (req, res) => {
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       {
-        expiresIn: "4d",
+        expiresIn: "1w",
       }
     );
 
@@ -104,13 +104,13 @@ const getAllUser = async (req, res) => {
     const user = await User.find().select("-password");
     res.json(user);
   } catch (error) {
-    res.satus(404).json({ error });
+    res.status(404).json({ error });
   }
 };
 
 const getUserMe = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const user = await User.findById(userId);
     if (!user) {
       throw new NotFoundError("Not Found Students");
