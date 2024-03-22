@@ -18,7 +18,7 @@ const login = async (req, res) => {
       { id: superTeacher._id, role: superTeacher.role },
       process.env.JWT_SECRET,
       {
-        expiresIn: "4d",
+        expiresIn: "1d",
       }
     );
     res.json({ token });
