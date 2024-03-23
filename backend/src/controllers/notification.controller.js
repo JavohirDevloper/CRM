@@ -10,8 +10,45 @@ const validateNotification = (notification) => {
 
 const getAllNotifications = async (req, res) => {
   try {
-    const notifications = await Notification.find();
-    res.json(notifications);
+    const { page = 1, limit = 10, sort, filter } = req.query;
+
+    const query = Notification.find();
+
+    // Sort
+    if (sort) {
+      const sortFields = sort.split(",");
+      query.sort(sortFields.join(" "));
+    }
+
+    // Filter
+    if (filter) {
+      const filterFields = filter.split(",");
+      filterFields.forEach((field) => {
+        const [key, value] = field.split(":");
+        query.where(key).equals(value);
+      });
+    }
+
+    // Pagination
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const totalCount = await Notification.countDocuments();
+    const totalPages = Math.ceil(totalCount / limit);
+
+    query.skip(startIndex).limit(limit);
+
+    const noti = await query;
+
+    const response = {
+      data: noti,
+      page,
+      limit,
+      totalPages,
+      totalCount,
+    };
+
+    res.json(response);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
