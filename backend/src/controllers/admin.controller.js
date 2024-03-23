@@ -76,10 +76,44 @@ const createAdmin = async (req, res) => {
 
 const getAllAdmins = async (req, res) => {
   try {
-    const admins = await Admin.find();
-    res.json(admins);
+    const { page = 1, limit = 10, sort, filter } = req.query;
+
+    const query = Admin.find().select("-password");
+
+    if (sort) {
+      const sortFields = sort.split(",");
+      query.sort(sortFields.join(" "));
+    }
+
+    if (filter) {
+      const filterFields = filter.split(",");
+      filterFields.forEach((field) => {
+        const [key, value] = field.split(":");
+        query.where(key).equals(value);
+      });
+    }
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const totalCount = await Admin.countDocuments();
+    const totalPages = Math.ceil(totalCount / limit);
+
+    query.skip(startIndex).limit(limit);
+
+    const admin = await query;
+
+    const response = {
+      data: admin,
+      page,
+      limit,
+      totalPages,
+      totalCount,
+    };
+
+    res.json(response);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json({ error: error.message });
   }
 };
 
