@@ -42,10 +42,47 @@ const createTeacher = async (req, res) => {
 
 const getAllTeachers = async (req, res) => {
   try {
-    const Teachers = await Teacher.find().select("-password");
-    res.json(Teachers);
+    const { page = 1, limit = 10, sort, filter } = req.query;
+
+    const query = Teacher.find().select("-password");
+
+    // Sort
+    if (sort) {
+      const sortFields = sort.split(",");
+      query.sort(sortFields.join(" "));
+    }
+
+    // Filter
+    if (filter) {
+      const filterFields = filter.split(",");
+      filterFields.forEach((field) => {
+        const [key, value] = field.split(":");
+        query.where(key).equals(value);
+      });
+    }
+
+    // Pagination
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const totalCount = await Teacher.countDocuments();
+    const totalPages = Math.ceil(totalCount / limit);
+
+    query.skip(startIndex).limit(limit);
+
+    const teacher = await query;
+
+    const response = {
+      data: teacher,
+      page,
+      limit,
+      totalPages,
+      totalCount,
+    };
+
+    res.json(response);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json({ error: error.message });
   }
 };
 
