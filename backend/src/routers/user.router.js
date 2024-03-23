@@ -9,6 +9,8 @@ const {
   getUserMe,
   getAllUser,
   createUser,
+  updateUserMe,
+  deleteUserMe,
 } = require("../controllers/user.controller");
 const isLoggedIn = require("../shared/auth/isLoggedIn");
 const hasRole = require("../shared/auth/hasRole");
@@ -39,7 +41,7 @@ router.get("/user", mUserAdminFind, getAllUser);
 router.get("/user/:id", mUserAdminFindById, getUserById);
 router.get("/user/me",mUserGetMe, getUserMe);
 router.put("/user/:id", mUserUpdateAdmin, updateUser);
-router.put("/user/me", mUserUpdateMe);
+router.put("/user/me", mUserUpdateMe, updateUserMe);
 router.delete("/user/:id", mUserAdminDelete, deleteUser);
-router.delete("/user/me", mDeleteMe);
+router.delete("/user/me", mDeleteMe, deleteUserMe);
 module.exports = router;
