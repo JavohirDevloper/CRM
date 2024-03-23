@@ -10,7 +10,7 @@ const handleError = require("./shared/errors/handle");
 // user routerlari
 const UserEmailRouter = require("./routers/user.router");
 const AdminRouter = require("./routers/admin.router");
-const FileRouter = require("./routers/files.router");
+const VideosRouter = require("./routers/videos.router");
 const CoursesRouter = require("./routers/courses.router");
 const TeacherRouter = require("./routers/teacher.router");
 const NotificationRouter = require("./routers/notification.router");
@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // routes
 app.use(UserEmailRouter);
 app.use(AdminRouter);
-app.use(FileRouter);
+app.use(VideosRouter);
 app.use(CoursesRouter);
 app.use(TeacherRouter);
 app.use(NotificationRouter);
