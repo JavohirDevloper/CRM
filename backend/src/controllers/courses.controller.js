@@ -51,7 +51,20 @@ const createCourse = async (req, res) => {
 
 const getAllCourses = async (req, res) => {
   try {
-    const courses = await Courses.find();
+    const courses = await Courses.find({ is_deleted: false });
+    res.status(200).json(courses);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getFilteredCourses = async (req, res) => {
+  try {
+    const category = req.query.category;
+    const courses = await Courses.find({
+      category: category,
+      is_deleted: false,
+    });
     res.status(200).json(courses);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -73,15 +86,26 @@ const getCourseById = async (req, res) => {
 const updateCourseById = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedCourses = await Courses.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
-    if (!updatedCourses) {
-      return res.status(404).json({ error: "Courses not found" });
+    const courses = await Courses.findById(id);
+    if (!courses) {
+      return res.status(404).json({ error: "Course not found" });
     }
-    res.json(updatedCourses);
+
+    if (req.file) {
+      courses.images = req.file.path;
+    }
+
+    courses.courses_name = req.body.courses_name || courses.courses_name;
+    courses.category = req.body.category || courses.category;
+    courses.description = req.body.description || courses.description;
+    courses.module = req.body.module || courses.module;
+    courses.number_of_lessons =
+      req.body.number_of_lessons || courses.number_of_lessons;
+
+    const updatedCourse = await courses.save();
+    res.json(updatedCourse);
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -105,6 +129,7 @@ module.exports = {
   createCourse,
   getCourseById,
   getAllCourses,
+  getFilteredCourses,
   updateCourseById,
   deleteCourseById,
   upload,
