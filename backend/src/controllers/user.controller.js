@@ -101,19 +101,57 @@ const createUser = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const user = await User.find().select("-password");
-    res.json(user);
+    const { page = 1, limit = 10, sort, filter } = req.query;
+
+    const query = User.find().select("-password");
+
+    // Sort
+    if (sort) {
+      const sortFields = sort.split(",");
+      query.sort(sortFields.join(" "));
+    }
+
+    // Filter
+    if (filter) {
+      const filterFields = filter.split(",");
+      filterFields.forEach((field) => {
+        const [key, value] = field.split(":");
+        query.where(key).equals(value);
+      });
+    }
+
+    // Pagination
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const totalCount = await User.countDocuments();
+    const totalPages = Math.ceil(totalCount / limit);
+
+    query.skip(startIndex).limit(limit);
+
+    const users = await query;
+
+    const response = {
+      data: users,
+      page,
+      limit,
+      totalPages,
+      totalCount,
+    };
+
+    res.json(response);
   } catch (error) {
-    res.status(404).json({ error });
+    res.status(500).json({ error: error.message });
   }
 };
 
 const getUserMe = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.params.userId;
     const user = await User.findById(userId);
+
     if (!user) {
-      throw new NotFoundError("Not Found Students");
+      return res.status(404).json("User not found");
     }
 
     res.status(200).json(user);
@@ -135,9 +173,9 @@ const getUserById = async (req, res) => {
   }
 };
 
-const updateUser = async (req, res) => {
+const updateUserMe = async (req, res) => {
   try {
-    const { id } = req.params;
+    const userId = req.user.id;
     const { first_name, last_name, email, password } = req.body;
 
     let updateData = {
@@ -148,7 +186,7 @@ const updateUser = async (req, res) => {
     };
 
     if (req.file) {
-      const user = await User.findById(id);
+      const user = await User.findById(userId);
       if (!user) {
         return res
           .status(404)
@@ -164,7 +202,7 @@ const updateUser = async (req, res) => {
       updateData.images = req.file.path;
     }
 
-    const user = await User.findByIdAndUpdate(id, updateData, {
+    const user = await User.findByIdAndUpdate(userId, updateData, {
       new: true,
       runValidators: true,
     });
@@ -176,11 +214,66 @@ const updateUser = async (req, res) => {
     res.status(400).json({ success: false, error });
   }
 };
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { first_name, last_name, email, password } = req.body;
 
+    let updateData = {
+      last_name,
+      first_name,
+      email,
+      password,
+    };
+
+    if (req.file) {
+      const user = await User.findById(id);
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+      }
+      if (
+        user.images !==
+        "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
+      ) {
+        fs.unlinkSync(user.images);
+      }
+
+      updateData.images = req.file.path;
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { updateData },
+      { new: true },
+      { runValidators: true }
+    );
+    res.status(200).json({ data: user });
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+};
+
+const deleteUserMe = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const deletedUser = await User.findByIdAndUpdate(
+      userId,
+      { is_deleted: true },
+      { new: true }
+    );
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json({ message: "User deleted successfully", deletedUser });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedUser = await User.findByIdAndUpdate(
+    const deletedUser = await User.findByIdAndDelete(
       id,
       { is_deleted: true },
       { new: true }
@@ -195,12 +288,14 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
+  register,
+  login,
   createUser,
   getAllUser,
   getUserById,
   getUserMe,
   updateUser,
+  updateUserMe,
   deleteUser,
-  login,
-  register,
+  deleteUserMe,
 };
