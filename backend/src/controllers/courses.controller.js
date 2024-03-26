@@ -1,5 +1,6 @@
 const Courses = require("../models/Courses");
 const multer = require("multer");
+const { User } = require("../models/User");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -49,6 +50,53 @@ const createCourse = async (req, res) => {
   }
 };
 
+const MyCourses = async (req, res) => {
+  try {
+    const user = req.user;
+    const courses = await Courses.find({
+      _id: { $in: user.purchasedCourses },
+    });
+
+    res.status(200).json(courses);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching courses" });
+  }
+};
+
+const purchaseCourse = async (req, res) => {
+  try {
+    const { courseId } = req.body;
+    const user = req.user;
+
+    const course = await Courses.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    const paymentIntent = await createPaymentIntent({
+      amount: course.price,
+      currency: "usd",
+    });
+
+    res.status(201).json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error processing purchase" });
+  }
+};
+
+const updatePurchasedCourses = async (userId, courseId) => {
+  try {
+    const user = await User.findByIdAndUpdate(userId, {
+      $push: { purchasedCourses: courseId },
+    });
+    console.log("Course purchased successfully for user:", user.email);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
 const getAllCourses = async (req, res) => {
   try {
     const courses = await Courses.find({ is_deleted: false });
@@ -126,6 +174,9 @@ const deleteCourseById = async (req, res) => {
   }
 };
 module.exports = {
+  MyCourses,
+  purchaseCourse,
+  updatePurchasedCourses,
   createCourse,
   getCourseById,
   getAllCourses,

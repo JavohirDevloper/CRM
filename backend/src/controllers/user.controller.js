@@ -4,70 +4,46 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const { User } = require("../models/User.js");
-const { NotFoundError } = require("../shared/errors/index.js");
 
 const register = async (req, res) => {
   try {
-    const schema = Joi.object({
-      first_name: Joi.string().required(),
-      last_name: Joi.string().required(),
-      email: Joi.string().email().required(),
-      password: Joi.string().min(4).required(),
-    });
+    const { first_name, last_name, email, password, device } = req.body;
 
-    const { error } = schema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ error: error.details[0].message });
-    }
-
-    const { first_name, last_name, email, password } = req.body;
-
-    const existingUser = await User.findOne({ email }).select("-password");
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({ error: "Email already exists" });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = bcrypt.hashSync(password, salt);
-
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       first_name,
-      email,
       last_name,
+      email,
       password: hashedPassword,
+      devices: [device],
     });
-    const savedUser = await newUser.save();
 
+    const savedUser = await newUser.save();
     res.status(201).json({ user: savedUser });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 };
 
 const login = async (req, res) => {
   try {
-    const schema = Joi.object({
-      email: Joi.string().email().required(),
-      password: Joi.string().required(),
-    });
-
-    const { error } = schema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ error: error.details[0].message });
-    }
-
-    const { email, password } = req.body;
+    const { email, password, device } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "Invalid email or password" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid password" });
+      return res.status(401).json({ error: "Invalid email or password" });
     }
-
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
