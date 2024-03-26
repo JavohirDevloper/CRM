@@ -7,6 +7,9 @@ const {
   updateCourseById,
   deleteCourseById,
   getFilteredCourses,
+  MyCourses,
+  purchaseCourse,
+  updatePurchasedCourses,
 } = require("../controllers/courses.controller");
 const isLoggedIn = require("../shared/auth/isLoggedIn");
 const hasRole = require("../shared/auth/hasRole");
@@ -19,6 +22,9 @@ const limiter = rateLimit({
   message:
     "Foydalanuvchi hajmi limitga yetdi. Iltimos, keyinroq harakat qiling.",
 });
+const mMyCourses = [isLoggedIn, limiter, hasRole(["student", "admin", "super_admin"])];
+const mPurchaseCourseUpdate = [isLoggedIn, limiter, hasRole(["student", "admin", "super_admin"])];
+const mPurchaseCourse = [isLoggedIn, limiter, hasRole(["student", "admin", "super_admin"])];
 const mCoursesCreate = [isLoggedIn, limiter, hasRole(["super_admin", "admin"])];
 const mGetCourses = [isLoggedIn, limiter, hasRole(["student", "admin", "super_admin"])];
 const mGetCoursesFilter = [isLoggedIn, limiter, hasRole(["student", "admin", "super_admin"])];
@@ -27,6 +33,9 @@ const mUpdateCorsesById = [isLoggedIn, limiter, isMongoId, hasRole(["admin", "su
 const mDeleteCorsesById = [isLoggedIn, limiter, isMongoId, hasRole(["admin", "super_admin"])];
 
 router.post("/courses", mCoursesCreate, createCourse);
+router.post("/courses/purchase", mPurchaseCourse, purchaseCourse);
+router.post("/courses/purchase/:id", mPurchaseCourseUpdate, updatePurchasedCourses)
+router.get("/courses/my", mMyCourses, MyCourses);
 router.get("/courses", mGetCourses, getAllCourses);
 router.get("/courses/filter", mGetCoursesFilter, getFilteredCourses); 
 router.get("/courses/:id", mGetCorsesById, getCourseById);
