@@ -48,17 +48,14 @@ const UserSchema = new mongoose.Schema({
     type: [
       {
         ip: {
-          type: mongoose.SchemaTypes.String,
+          type: String,
           required: true,
         },
-        userAgent: {
-          type: mongoose.SchemaTypes.String,
-        },
-        deviceId: {
-          type: mongoose.SchemaTypes.String,
-        },
+        userAgent: String,
+        deviceId: String,
       },
     ],
+    default: [],
   },
 });
 
